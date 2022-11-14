@@ -31,7 +31,7 @@ def on_message(client, userdata, message):
 
 
 mqttBroker = "test.mosquitto.org"
-client = mqtt.Client("Controle_qualite")
+client = mqtt.Client("LV")
 client.connect(mqttBroker)
 
 client.loop_start()
@@ -44,16 +44,14 @@ root = Tk()
 
 root.title("Montage Lève Vitre")
 root.config(bg='#7F8FA6')
-root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
-root.iconbitmap("C:/Users/natha/Desktop/ECAM/ECAM/Usine_4.0/Programmes_Python/Main_program/Logo_ECAM_Rennes.ico")
+root.geometry("1024x744")
+root.iconbitmap("Logo_ECAM_Rennes.ico")
 
 root.columnconfigure(0, weight = 2)
 root.columnconfigure(1, weight = 1)
 
 portiere_actuelle = "?"
-"""Création des frame"""
-right_frame= Frame(root,bg='#7F8FA6')
-left_frame = Frame(root,bg='#7F8FA6')
+
 
 """Création d'image"""
 
@@ -81,52 +79,43 @@ def update_image():
 
 def valide():
     global heure_entree
-    client.publish("ECAM_qualite", str(liste_portiere[0]) + ";" + str(heure_entree[0]) + ";" + get_time())
+    client.publish("ECAM_LV", str(liste_portiere[0]) + ";" + str(heure_entree[0]) + ";" + get_time())
     print(str(liste_portiere[0]) + ";" + str(heure_entree[0]) + ";" + get_time())
     del liste_portiere[0]
     del heure_entree[0]
     update_image()
 
 
-width = 900
-height = 800
-image_avant = PhotoImage(file= "C:/Users/natha/Desktop/ECAM/ECAM/Usine_4.0/Programmes_Python/Main_program/Montage_LV_avant.png").zoom(1).subsample(1)
-image_arriere = PhotoImage(file= "C:/Users/natha/Desktop/ECAM/ECAM/Usine_4.0/Programmes_Python/Main_program/Montage_LV_arriere.png").zoom(16).subsample(10)
-image_attente = PhotoImage(file= "C:/Users/natha/Desktop/ECAM/ECAM/Usine_4.0/Programmes_Python/Main_program/attente.png").zoom(20).subsample(15)
+width = 650
+height = 600
+image_avant = PhotoImage(file= "Montage_LV_avant.png").zoom(1).subsample(2)
+image_arriere = PhotoImage(file= "Montage_LV_arriere.png").zoom(1).subsample(2)
+image_attente = PhotoImage(file= "attente.png").zoom(1).subsample(2)
 
 """Canvas image"""
-canvas = Canvas(left_frame, width = width, height = height, bg="#7F8FA6", highlightthickness=1)
+canvas = Canvas(root, width = width, height = height, bg="#7F8FA6", highlightthickness=1)
 canvas_image = canvas.create_image(width/2, height/2, image = image_attente)
 point = canvas.create_oval(380,550,390,560,fill = "black")
-canvas.grid(row = 1, column = 0, sticky = W, padx = 50)
+canvas.grid(row = 1, column = 0, sticky = W, padx = 25, rowspan = 2)
 
 
 # """Logo ECAM Rennes"""
-image_logo_ECAM = PhotoImage(file= "C:/Users/natha/Desktop/ECAM/ECAM/Usine_4.0/Programmes_Python/Main_program/Logo_ECAM_Rennes.png").zoom(1).subsample(12)
-my_label = Label(right_frame, image = image_logo_ECAM, bg='#7F8FA6')
+image_logo_ECAM = PhotoImage(file= "Logo_ECAM_Rennes.png").zoom(1).subsample(15)
+my_label = Label(root, image = image_logo_ECAM, bg='#7F8FA6')
 # my_label.place(x=1, y=500)
-my_label.grid(row = 3, column = 2)
+my_label.grid(row = 2, column = 1)
 
-label_title = Label(left_frame, text = "Montage coulisse", font=("Helvetica", 30), bg='#7F8FA6', pady = 20)
+label_title = Label(root, text = "Montage coulisse", font=("Helvetica", 15), bg='#7F8FA6', pady = 20)
 label_title.grid(row = 0, column = 0)
 
 
 """Création bouton"""
-button_valide = Button(right_frame, text = "Valider montage", font=("Helvetica", 30), width = 15, command = valide, bg = "#13B94D")
-button_valide.grid(row = 1, column = 0, pady = 250, columnspan = 3)
+button_valide = Button(root, text = "Valider montage", font=("Helvetica", 15), width = 15, command = valide, bg = "#13B94D")
+button_valide.grid(row = 1, column = 1, pady = 250)
 
-button_EPI1 = Button(right_frame, text = "EPI 1", font=("Helvetica", 20), height = 2, width = 5)
-button_EPI1.grid(row = 0, column = 0, padx = 100, pady = 50)
+button_EPI1 = Button(root, text = "EPI 1", font=("Helvetica", 10), height = 2, width = 5, command = EPI)
+button_EPI1.grid(row = 0, column = 1, padx = 10, pady = 21)
 
-button_EPI2 = Button(right_frame, text = "EPI 2", font=("Helvetica", 20), height = 2, width = 5)
-button_EPI2.grid(row = 0, column = 1, padx = 100, pady = 30)
-
-button_EPI3 = Button(right_frame, text = "EPI 3", font=("Helvetica", 20), height = 2, width = 5)
-button_EPI3.grid(row = 0, column = 2, padx = 100, pady = 30)
-
-
-left_frame.grid(row = 0, column = 0)
-right_frame.grid(row = 0, column = 1, sticky = N)
 
 update_image()
 
